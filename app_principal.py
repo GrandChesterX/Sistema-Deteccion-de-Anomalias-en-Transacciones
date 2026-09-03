@@ -43,16 +43,16 @@ except Exception as e:
 try:
     predicciones = cp.detectar_anomalias(st.session_state['data_limpia'])
     
-    # Convertimos la lista de Milán en un DataFrame pequeño para graficar
+    # Convertimos la lista en un DataFrame pequeño para graficar
     df_prediccion = pd.DataFrame(predicciones, columns=["Camas Requeridas"])
-    df_prediccion.index = range(1, len(predicciones) + 1) # Nombramos los días del 1 al 7
+    df_prediccion.index = range(1, len(predicciones) + 1) 
     
-    # Dibujamos el gráfico de líneas
+    # Dibujamos el gráfico de barras
     st.bar_chart(df_prediccion)
 
 except AttributeError:
-    # Si Milán aún no ha subido su función
+    
     st.info("⏳ Esperando el motor predictivo de demanda (Milán)...")
 except Exception as e:
-    # Si hay algún error dentro de la función de Milán
+    
     st.error(f"❌ Error al calcular la predicción: {e}")
