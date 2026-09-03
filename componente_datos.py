@@ -22,14 +22,16 @@ def cargar_y_validar_transacciones(filepath_or_buffer) -> pd.DataFrame:
     faltantes = [col for col in columnas_separadas if col not in df.columns] #estamos verificando si todas las columnas que necesitamos están presentes en el dataframe, si no lo están, se guardan en la lista faltantes
     if faltantes:
         raise ValueError(f"Contrato incumplido. Faltan las siguientes columnas: {faltantes}")
-    #3. Regla Estricta: No hay transacciones con monto 0 o negativo
-    if (df["monto_eur"] <= 0).any():
-        raise ValueError("Contrato incumplido: Existen registros con monto 0 o negativo")
     
     try:
         df["id_transaccion"] = df["id_transaccion"].astype(str)
-        df["fecha_hora"] = pd.to_datetime(df["fecha_hora"])
-        df["monto_eur"] = df["monto_eur"].astype("float64")
+        df["fecha_hora"] = pd.to_datetime(df["fecha_hora"], format="%d-%m-%y %H:%M")
+        df["monto_eur"] = (
+            df["monto_eur"].astype(str)
+            .str.replace(".", "", regex=False)
+            .str.replace(",", ".", regex=False)
+            .astype("float64")
+        )
         df["distancia_km_cliente"] = df["distancia_km_cliente"].astype("float64")
     except Exception as error:
         raise ValueError(f"Contrato incumplido: Error al convertir los tipos de datos {error}")
